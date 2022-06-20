@@ -56,10 +56,14 @@ const Navigation = () => {
             >
               {tabs.map((tab) => (
                 <Tab
+                  wrapped={true}
                   key={tab.id}
                   id={tab.id}
                   label={tab.name}
                   onClick={() => {
+                    if(tab.name === 'Home'){
+                      return navigate(`/`)
+                    }
                     navigate(`/${tab.name}`)
                   }}
                 />
