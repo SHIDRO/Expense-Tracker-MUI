@@ -1,81 +1,26 @@
-import React, { useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Box,
-  Tabs,
-  Tab,
-  Grid,
-  Container,
-} from "@mui/material";
-import PaidIcon from "@mui/icons-material/Paid";
-
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import {Routes, Route, Navigate} from 'react-router-dom';
+import Home from "./Pages/Home";
+import Navigation from "./Pages/Navigation";
+import Dashboard from "./Pages/Dashboard";
 
-
-import {Routes} from 'react-router-dom';
-
-const tabs = [
-  {
-    id: 1,
-    name: "Home",
-  },
-  {
-    id: 2,
-    name: "Dashboard",
-  },
-  {
-    id: 3,
-    name: "Profile",
-  },
-];
 
 const App = () => {
   const {transactions} = useSelector(state => state).transactions;
-  const [value, setValue] = useState(0);
-
-  const tabsChangeHandler = (e, newValue) => {
-    setValue(newValue);
-  };
+  useEffect(() => {
+    localStorage.setItem("transactions",  JSON.stringify(transactions));
+  }, [transactions]);
 
   return (
     <div>
-      <AppBar position="relative">
-        <Toolbar sx={{ backgroundColor: "#fff", padding: "10px" }}>
-          <PaidIcon sx={{ marginRight: "10px", color: "black" }} />
-          <Typography variant="h5" color={"black"}>
-            Expense Tracker
-          </Typography>
-          <Box
-            sx={{
-              marginLeft: "40px",
-              borderBottom: "1px",
-              borderColor: "divider",
-            }}
-          >
-            <Tabs
-              value={value}
-              onChange={tabsChangeHandler}
-              aria-label="basic tabs example"
-            >
-              {tabs.map((tab) => (
-                <Tab
-                  key={tab.id}
-                  id={tab.id}
-                  label={tab.name}
-                  onClick={() => {
-                    console.log(`navigate to => localhost:3000/${tab.name}`);
-                  }}
-                />
-              ))}
-            </Tabs>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
+      <Navigation/>
       <main>
-        
+        <Routes>
+          <Route path="/" element={<Navigate to="/Home" replace/>}/>
+          <Route path="/Home" element={<Home/>}/>
+          <Route path="/Dashboard" element={<Dashboard/>}/>
+        </Routes>
       </main>
     </div>
   );

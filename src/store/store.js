@@ -1,8 +1,11 @@
 import { createSlice, configureStore } from '@reduxjs/toolkit';
 
+
+const initialState = {transactions: JSON.parse(localStorage.getItem('transactions')) || []}
+
 const transactions = createSlice({
     name: 'transactions',
-    initialState: {transactions: []},
+    initialState: initialState,
     reducers: {
         addTransaction(state, action){
             state.transactions.push(action.payload);
