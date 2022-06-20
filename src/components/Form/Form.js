@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Grid,
@@ -18,11 +18,13 @@ import {
   incomeCategories,
   expenseCategories,
 } from "../../constants/categories";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import formatDate from "../../utils/formatDate";
 import { transactionsActions } from "../../store/store";
 import { useDispatch } from "react-redux/es/exports";
 import { v4 as uuidv4 } from 'uuid';
+import { useSpeechContext } from "@speechly/react-client";
+import CustomizedAlert from "../Snackbar/CustomizedAlert";
 
 const initialState = {
   type: "Income",
@@ -34,13 +36,64 @@ const initialState = {
 const Form = () => {
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
+  const { segment } = useSpeechContext()
+  const [openAlert, setOpenAlert] = useState(false);
   // const {transactions} = useSelector((state) => state);
+
+  useEffect(() => {
+    if(segment){
+      switch (segment.intent.intent) {
+        case "add_income":
+           setFormData(prevState => ({...prevState, type: 'Income'}))
+          break;
+        case "add_expense":
+           setFormData(prevState => ({...prevState, type: "Expense"}))
+           break;
+        case "create_transaction": 
+        if(segment.isFinal){
+          return dispatch(transactionsActions.addTransaction({...formData, id: uuidv4()}))
+        }
+        break;
+
+        case "cancel_transaction":
+          if(segment.isFinal){
+            return setFormData(initialState);
+          }
+          break;
+        default:
+          break;
+      }
+      segment.entities.forEach(e => {
+        if(e.type === 'category'){
+          const category = `${e.value[0]}${e.value.slice(1).toLocaleLowerCase()}`;
+
+          if(incomeCategories.map(c => c.type).includes(category)){
+            setFormData(prevState => ({...prevState, category, type: 'Income'}))
+          } else if(expenseCategories.map(c => c.type).includes(category)) {
+            setFormData(prevState => ({...prevState, category, type: 'Expense'}))
+          }
+         
+        } else if(e.type === 'amount'){
+          setFormData(prevState => ({...prevState, amount: +e.value}))
+        } else {
+          setFormData(prevState => ({...prevState, [e.type]: e.value}))
+        }
+      });
+
+      if(segment.isFinal && formData.date && formData.amount && formData.category && formData.type){
+        dispatch(transactionsActions.addTransaction({...formData, id: uuidv4()}));
+        setOpenAlert(true);
+      }
+    }
+  }, [segment, dispatch])
 
   const selectedCategories =
     formData.type === "Income" ? incomeCategories : expenseCategories;
 
-
+  console.log(openAlert)
   return (
+    <>
+    <CustomizedAlert open={openAlert} setOpen={setOpenAlert}/>
     <Container maxWidth="md" sx={{ marginTop: "50px" }}>
       <Box>
         <Typography align="center" variant="h4">
@@ -57,8 +110,8 @@ const Form = () => {
         </Typography>
       </Box>
       <Divider />
-      <Typography sx={{ marginTop: "15px" }} align="center" variant="subtitle1">
-        what they sayin`
+      <Typography sx={{ marginTop: "15px" }} align="center" variant="subtitle2">
+        {segment && segment.words.map(w => w.value).join(' ')}
       </Typography>
       <Grid sx={{ padding: "20px 40px" }} container spacing={2}>
         <Grid item xs={6}>
@@ -116,13 +169,13 @@ const Form = () => {
 
         <Button
           onClick={() => {
-            if(!formData.amount || !formData.category) return;
+            if(Number.isNaN(Number(formData.amount)) || !formData.date.includes('-')) return;
 
             const id = uuidv4()
             dispatch(transactionsActions.addTransaction({...formData, id: id}));
             setFormData(initialState);
 
-
+            setOpenAlert(true);
           }}
           sx={{ margin: "20px auto 0", padding: "7px 20px" }}
           variant="outlined"
@@ -132,6 +185,7 @@ const Form = () => {
         </Button>
       </Grid>
     </Container>
+    </>
   );
 };
 

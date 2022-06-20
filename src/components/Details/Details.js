@@ -11,11 +11,10 @@ const Details = ({title}) => {
     //expense
    const {total, data} = useTransactions(title)
     const color = title === "Income" ?  "#80ff80" : "#ff4d4d"
-    console.log(data)
 
   return (
-    <div style={{borderBottom: `1px ${color} solid`}}>
-        <Container maxWidth="md">
+    <div style={{borderBottom: `1px ${color} solid`, marginBottom: '20px'}}>
+        <Container sx={{marginBottom:' 20px'}} maxWidth="md">
             <Box>
                 <Typography sx={{marginTop: '10px'}} align="center" variant="h5" >{title}</Typography>
             </Box>

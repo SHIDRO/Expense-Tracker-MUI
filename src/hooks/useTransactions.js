@@ -10,7 +10,7 @@ const useTransactions = (title) => {
     const choseColors = title === "Income" ? incomeCategories : expenseCategories
 
     const selectedTransactions = transactions.filter(tr => tr.type === title);
-    let total = 0;
+    let total;
     total = selectedTransactions.reduce((total, transaction) => {return total += transaction.amount}, 0);
 
     const categories = [];
