@@ -1,4 +1,5 @@
-#Details:
+# Details:
+
 I build these expense tracker to practice and show how I learn fast and effectively new technologies, features frameworks...
 - I used here cool frameworks like mui to style the web app, I implemented chart.js and react-chart-js2 features to display these cool charts.
 - I used @redux/toolkit to manage my global-state-managment especially transactions.
