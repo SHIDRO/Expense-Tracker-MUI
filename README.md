@@ -1,3 +1,9 @@
+#Details:
+I build these expense tracker to practice and show how I learn fast and effectively new technologies, features frameworks...
+- I used here cool frameworks like mui to style the web app, I implemented chart.js and react-chart-js2 features to display these cool charts.
+- I used @redux/toolkit to manage my global-state-managment especially transactions.
+- I really like using react-router-dom (v6) so I added a nice little navigation router together with my nice AppBar.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
