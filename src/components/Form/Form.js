@@ -38,7 +38,6 @@ const Form = () => {
   const dispatch = useDispatch();
   const { segment } = useSpeechContext()
   const [openAlert, setOpenAlert] = useState(false);
-  // const {transactions} = useSelector((state) => state);
 
   useEffect(() => {
     if(segment){
@@ -90,7 +89,6 @@ const Form = () => {
   const selectedCategories =
     formData.type === "Income" ? incomeCategories : expenseCategories;
 
-  console.log(openAlert)
   return (
     <>
     <CustomizedAlert open={openAlert} setOpen={setOpenAlert}/>
